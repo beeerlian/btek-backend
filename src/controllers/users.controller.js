@@ -19,10 +19,19 @@ exports.create = async (req, res) => {
 
 exports.readAll = async (req, res) => {
 	try {
-		const users = await model.user.findAllUsers();
+		req.query.offset = (req.query.page - 1) * req.query.limit;
+		const users = await model.user.findAllUsers(req.query);
+		const totalRecord = await model.user.selectAll(req.query);
+		const pageInfo = {
+			page: req.query.page,
+			previousPage: (req.query.page > 1 ? req.query.page - 1 : null),
+			nextPage: (req.query.page < Math.ceil(totalRecord.rowCount / req.query.limit) ? req.query.page + 1 : null),
+			totalPage: Math.ceil(totalRecord.rowCount / req.query.limit),
+		};
 		return res.json({
 			success: true,
 			message: "Read all users successfully",
+			page: pageInfo,
 			results: users.rows,
 		});
 	} catch (err) {

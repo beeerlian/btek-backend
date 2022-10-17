@@ -1,15 +1,16 @@
-const users = require("express").Router();
+const usersRouter = require("express").Router();
 
 const controller = require("../controllers");
-const {
-	userValidators,
-	validate
-} = require("../middlewares/users_input_validation");
+const { users, params, check, pagination } = require("../middlewares/validator");
+const { pagging } = pagination;
+const { basicCreds, search } = users;
+const { isUUID } = params;
 
-users.get("/", controller.user.readAll);
-users.post("/", userValidators, validate, controller.user.create);
-users.get("/:id", controller.user.readById);
-users.delete("/:id", controller.user.delete);
-users.put("/:id", userValidators, validate, controller.user.update);
 
-module.exports = users;
+usersRouter.get("/", pagging, search, check, controller.user.readAll);
+usersRouter.post("/", basicCreds, check, controller.user.create);
+usersRouter.get("/:id", isUUID, check, controller.user.readById);
+usersRouter.delete("/:id", isUUID, check, controller.user.delete);
+usersRouter.put("/:id", isUUID, basicCreds, check, controller.user.update);
+
+module.exports = usersRouter;

@@ -1,5 +1,6 @@
 const db = require("../helpers/db.helper");
 
+
 const table = "users";
 
 exports.insertUser = (data) => {
@@ -8,8 +9,14 @@ exports.insertUser = (data) => {
 	return db.query(sql, params);
 };
 
-exports.findAllUsers = () => {
-	const sql = `SELECT * FROM ${table}`;
+exports.findAllUsers = (data) => {
+	const sql = `SELECT * FROM ${table} WHERE "${data.searchBy}" LIKE '%${data.search}%' ORDER BY "${data.sortBy}" ${data.reverse ? "DESC" : "ASC"}  LIMIT $1 OFFSET $2`;
+	const params = [data.limit, data.offset];
+	return db.query(sql, params);
+};
+
+exports.selectAll = (data) => {
+	const sql = `SELECT * FROM ${table} WHERE "${data.searchBy}" LIKE '%${data.search}%' ORDER BY "${data.sortBy}" ${data.reverse ? "DESC" : "ASC"}`;
 	return db.query(sql);
 };
 
