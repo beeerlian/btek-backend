@@ -3,6 +3,18 @@ const db = require("../helpers/db.helper");
 
 const table = "users";
 
+exports.findUserByEmail = (data) => {
+	const sql = `SELECT * FROM ${table} WHERE "email" = $1`;
+	const params = [data.email];
+	return db.query(sql, params);
+};
+
+exports.findUserByEmailAndPass = (data) => {
+	const sql = `SELECT * FROM ${table} WHERE "email" = $1 AND "password" = $2`;
+	const params = [data.email, data.password];
+	return db.query(sql, params);
+};
+
 exports.insertUser = (data) => {
 	const sql = `INSERT INTO ${table} ("email", "password") VALUES ($1, $2) RETURNING *`;
 	const params = [data.email, data.password];
