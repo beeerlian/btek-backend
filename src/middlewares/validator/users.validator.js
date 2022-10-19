@@ -2,7 +2,7 @@ const { body, query } = require("express-validator");
 
 exports.basicCreds = [
 	body("email").isEmail().normalizeEmail().withMessage("Email is invalid"),
-	body("password").isLength({ min: 8 }).withMessage("Password must be 8 character or more"),
+	body("password").isLength({ min: 8 }).isStrongPassword({ minNumbers: 0 }).withMessage("Password must be 8 character or more"),
 ];
 
 exports.search = [
