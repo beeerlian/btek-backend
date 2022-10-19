@@ -2,14 +2,37 @@ const { body, query } = require("express-validator");
 
 exports.basicCreds = [
 	body("email").isEmail().normalizeEmail().withMessage("Email is invalid"),
-	body("password").isLength({ min: 8 }).isStrongPassword({ minNumbers: 0 }).withMessage("Password must be 8 character or more and at least contain 1 symbol, 1 uppercase, and 1 lowercase"),
+	body("password")
+		.isStrongPassword({ minNumbers: 1 })
+		.withMessage("Password must contain at least 1 number")
+		.isStrongPassword({ minLength: 8 })
+		.withMessage("Password must 8 character or more")
+		.isStrongPassword({ minLowercase: 1 })
+		.withMessage("Password must contain at least 1 lowercase")
+		.isStrongPassword({ minUppercase: 1 })
+		.withMessage("Password must contain at least 1 uppercase")
+		.isStrongPassword({ minSymbols: 1 })
+		.withMessage("Password must contain at least 1 symbol")
 ];
+
 exports.passwordOnlyCreds = [
-	body("password").isLength({ min: 8 }).isStrongPassword({ minNumbers: 0 }).withMessage("Password must be 8 character or more and at least contain 1 symbol, 1 uppercase, and 1 lowercase"),
+	body("password")
+		.isStrongPassword({ minNumbers: 1 })
+		.withMessage("Password must contain at least 1 number")
+		.isStrongPassword({ minLength: 8 })
+		.withMessage("Password must 8 character or more")
+		.isStrongPassword({ minLowercase: 1 })
+		.withMessage("Password must contain at least 1 lowercase")
+		.isStrongPassword({ minUppercase: 1 })
+		.withMessage("Password must contain at least 1 uppercase")
+		.isStrongPassword({ minSymbols: 1 })
+		.withMessage("Password must contain at least 1 symbol")
 ];
+
 exports.emailOnlyCreds = [
 	body("email").isEmail().normalizeEmail().withMessage("Email is invalid"),
 ];
+
 exports.search = [
 	(req, res, next) => {
 		req.query.searchBy = req.query.searchBy || "email";
