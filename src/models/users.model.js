@@ -3,8 +3,15 @@ const db = require("../helpers/db.helper");
 
 const table = "users";
 
+
+exports.updatePasswordById = (id, data) => {
+	const sql = `UPDATE ${table} SET "password" = $2 WHERE id = $1 RETURNING *`;
+	const params = [id, data.password];
+	return db.query(sql, params);
+};
+
 exports.findUserByEmail = (data) => {
-	const sql = `SELECT * FROM ${table} WHERE "email" = $1`;
+	const sql = `SELECT * FROM ${table} WHERE "email" = $1 `;
 	const params = [data.email];
 	return db.query(sql, params);
 };
