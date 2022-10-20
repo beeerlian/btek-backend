@@ -99,7 +99,7 @@ exports.forgotPassword = async (req, res) => {
 			throw new Error("User not found");
 		}
 		const user = find.rows[0];
-		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id });
+		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id }, ["id", "code", "email", "\"userId\""]);
 
 		return res.json({
 			success: true,
