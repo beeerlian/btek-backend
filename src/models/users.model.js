@@ -6,6 +6,7 @@ const table = "users";
 
 exports.updatePasswordById = (id, data) => {
 	const sql = `UPDATE ${table} SET "password" = $2 WHERE id = $1 RETURNING *`;
+	console.log(`update data : ${data.password}`);
 	const params = [id, data.password];
 	return db.query(sql, params);
 };
@@ -32,6 +33,11 @@ exports.findAllUsers = (data) => {
 	const sql = `SELECT * FROM ${table} WHERE "${data.searchBy}" LIKE '%${data.search}%' ORDER BY "${data.sortBy}" ${data.reverse ? "DESC" : "ASC"}  LIMIT $1 OFFSET $2`;
 	const params = [data.limit, data.offset];
 	return db.query(sql, params);
+};
+
+exports.selectAllForMigrate = () => {
+	const sql = `SELECT * FROM ${table}`;
+	return db.query(sql);
 };
 
 exports.selectAll = (data) => {

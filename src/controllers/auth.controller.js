@@ -1,16 +1,23 @@
+
+
 const model = require("../models");
+const { hash, verify, signJWT } = require("../utils");
+
 exports.login = async (req, res) => {
 	try {
-		const result = await model.user.findUserByEmailAndPass(req.body);
-
+		const result = await model.user.findUserByEmail(req.body);
 		if (!result.rows[0]) {
-			throw new Error("login failed, wrong email and password");
+			throw new Error("login failed, email not found");
 		}
 		const user = result.rows[0];
+		if (!await verify(user.password, req.body.password)) {
+			throw new Error("login failed, wrong password");
+		}
+		const token = signJWT({ id: user.id });
 		return res.json({
 			success: true,
 			message: "Logged in successfully",
-			results: user,
+			access_token: token,
 		});
 	} catch (err) {
 		return res.status(500).json({
@@ -20,17 +27,22 @@ exports.login = async (req, res) => {
 	}
 };
 
+
 exports.register = async (req, res) => {
 	try {
 		const find = await model.user.findUserByEmail(req.body);
 		if (find.rows[0]) {
 			throw new Error("Email already taken");
 		}
+		req.body.password = await hash(req.body.password);
 		const insert = await model.user.insertUser(req.body);
+		if (!insert.rows[0]) {
+			await model.profile.insertProfile({ userId: insert.rows[0].id });
+		}
 		const user = insert.rows[0];
 		return res.json({
 			success: true,
-			message: "User registerd successfully",
+			message: "User registerd successfully, please complete profile",
 			results: user,
 		});
 	} catch (err) {
@@ -42,6 +54,7 @@ exports.register = async (req, res) => {
 };
 exports.resetPassword = async (req, res) => {
 	try {
+		req.body.password = await hash(req.body.password);
 		const insert = await model.user.updatePasswordById(req.params.id, req.body);
 		const user = insert.rows[0];
 		return res.json({
@@ -56,9 +69,9 @@ exports.resetPassword = async (req, res) => {
 		});
 	}
 };
+
 exports.forgotPassword = async (req, res) => {
 	try {
-
 		const find = await model.user.findUserByEmail(req.body);
 		if (!find.rows[0]) {
 			throw new Error("User not found");
@@ -74,6 +87,25 @@ exports.forgotPassword = async (req, res) => {
 			success: true,
 			message: "To change your password access route in below",
 			results: results,
+		});
+	} catch (err) {
+		return res.status(500).json({
+			success: false,
+			message: `Error: ${err.message}`,
+		});
+	}
+};
+
+exports.migrateProfile = async (req, res) => {
+	try {
+		const find = await model.user.selectAllForMigrate();
+		for (const row of find.rows) {
+			await model.profile.insertProfile({ userId: row.id });
+		}
+		return res.json({
+			success: true,
+			message: "created profile successfully, please complete profile",
+
 		});
 	} catch (err) {
 		return res.status(500).json({
