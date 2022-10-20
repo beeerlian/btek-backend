@@ -6,7 +6,6 @@ const table = "users";
 
 exports.updatePasswordById = (id, data) => {
 	const sql = `UPDATE ${table} SET "password" = $2 WHERE id = $1 RETURNING *`;
-	console.log(`update data : ${data.password}`);
 	const params = [id, data.password];
 	return db.query(sql, params);
 };

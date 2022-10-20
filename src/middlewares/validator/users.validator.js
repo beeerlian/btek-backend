@@ -29,6 +29,28 @@ exports.passwordOnlyCreds = [
 		.withMessage("Password must contain at least 1 symbol")
 ];
 
+exports.resetPasswordCreds = [
+	body("code").isUUID(4).withMessage("invalid code"),
+	body("email").isEmail().normalizeEmail().withMessage("Email is invalid"),
+	body("newPassword")
+		.isStrongPassword({ minNumbers: 1 })
+		.withMessage("Password must contain at least 1 number")
+		.isStrongPassword({ minLength: 8 })
+		.withMessage("Password must 8 character or more")
+		.isStrongPassword({ minLowercase: 1 })
+		.withMessage("Password must contain at least 1 lowercase")
+		.isStrongPassword({ minUppercase: 1 })
+		.withMessage("Password must contain at least 1 uppercase")
+		.isStrongPassword({ minSymbols: 1 })
+		.withMessage("Password must contain at least 1 symbol"),
+	body("confirmPassword").custom((value, { req }) => {
+		if (value !== req.body.newPassword) {
+			throw new Error("confirm password does not match password");
+		}
+		return true;
+	}),
+];
+
 exports.emailOnlyCreds = [
 	body("email").isEmail().normalizeEmail().withMessage("Email is invalid"),
 ];

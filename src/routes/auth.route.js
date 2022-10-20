@@ -1,15 +1,15 @@
 const authRouter = require("express").Router();
 
 const { auth } = require("../controllers");
-const { users, params, check } = require("../middlewares/validator");
-const { basicCreds, passwordOnlyCreds, emailOnlyCreds } = users;
-const { isUUID } = params;
+const authz = require("../middlewares/authz");
+const { users, check } = require("../middlewares/validator");
+const { basicCreds, emailOnlyCreds, resetPasswordCreds } = users;
 
 
 authRouter.get("/migrate", auth.migrateProfile);
 authRouter.post("/login", basicCreds, check, auth.login);
 authRouter.post("/register", basicCreds, check, auth.register);
-authRouter.post("/:id/reset-password", isUUID, passwordOnlyCreds, check, auth.resetPassword);
-authRouter.post("/forgot-password", emailOnlyCreds, check, auth.forgotPassword);
+authRouter.post("/reset-password", authz.verify, resetPasswordCreds, check, auth.resetPassword);
+authRouter.post("/forgot-password", authz.verify, emailOnlyCreds, check, auth.forgotPassword);
 
 module.exports = authRouter;

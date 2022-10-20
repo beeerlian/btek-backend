@@ -10,6 +10,7 @@ module.exports = (req, res, next) => {
 		const token = authHeader.slice(7);
 		const payload = verifyJWT(token);
 		req.user = payload;
+		console.log(req.user);
 		next();
 	} catch (error) {
 		res.status(500).json({
