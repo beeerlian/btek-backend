@@ -55,22 +55,22 @@ exports.register = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
 	try {
-		if (req.user.email !== req.body.email) {
-			throw new Error("cannot send reset password with this email, token unmatched");
-		}
+		// if (req.user.email !== req.body.email) {
+		// 	throw new Error("cannot send reset password with this email, token unmatched");
+		// }
 
 		const fp = await model.forgot_password.findForgotPassword(req.body.code);
-
-		if (!fp.rows[0]) {
+		const forgotPassword = fp.rows[0];
+		if (!forgotPassword) {
 			throw new Error("invalid reset password code");
 		}
 
-		if (!fp.rows[0].available) {
+		if (!forgotPassword.available) {
 			throw new Error("reset password code has no longer available");
 		}
 
 		req.body.password = await hash(req.body.newPassword);
-		const insert = await model.user.updatePasswordById(req.user.id, req.body);
+		const insert = await model.user.updatePasswordById(forgotPassword.userId, req.body);
 		const user = insert.rows[0];
 		console.log(insert);
 		await model.forgot_password.updateForgotPassword(req.body.code, { available: false });
@@ -90,9 +90,9 @@ exports.resetPassword = async (req, res) => {
 
 exports.forgotPassword = async (req, res) => {
 	try {
-		if (req.user.email !== req.body.email) {
-			throw new Error("cannot send forgot password with this email, token unmatched");
-		}
+		// if (req.user.email !== req.body.email) {
+		// 	throw new Error("cannot send forgot password with this email, token unmatched");
+		// }
 
 		const find = await model.user.findUserByEmail(req.body);
 		if (!find.rows[0]) {
