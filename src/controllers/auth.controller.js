@@ -62,15 +62,11 @@ exports.resetPassword = async (req, res) => {
 			throw new Error("invalid reset password code");
 		}
 
-		if (!forgotPassword.available) {
-			throw new Error("reset password code has no longer available");
-		}
-
 		req.body.password = await hash(req.body.newPassword);
 		const insert = await model.user.updatePasswordById(forgotPassword.userId, req.body);
 		const user = insert.rows[0];
 		console.log(insert);
-		await model.forgot_password.updateForgotPassword(req.body.code, { available: false });
+		await model.forgot_password.deleteForgotPassword(req.body.code);
 
 		return res.json({
 			success: true,
@@ -92,7 +88,7 @@ exports.forgotPassword = async (req, res) => {
 			throw new Error("User not found");
 		}
 		const user = find.rows[0];
-		const code = await randomString(50);
+		const code = await randomString(6, "1234567890");
 		console.log(code);
 		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id, code: code }, ["id", "code", "email", "\"userId\""]);
 

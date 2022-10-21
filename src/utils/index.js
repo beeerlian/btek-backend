@@ -23,8 +23,9 @@ exports.verifyJWT = (token) => {
 	return jwt.verify(token, process.env.JWT_SECRET);
 };
 
-exports.randomString = async (length) => {
+exports.randomString = async (length, customCharacter) => {
 	const { customAlphabet } = await import("nanoid");
-	const nanoId = customAlphabet("0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 10);
+	const character = customCharacter ?? "0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const nanoId = customAlphabet(character, 10);
 	return nanoId(length);
 };
