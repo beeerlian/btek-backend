@@ -10,7 +10,7 @@ const sendResetPassCodeToEmail = (receiver, code) => {
 		to: `${receiver}`,
 		subject: "btek-backend-reset-password-code", // Subject line
 		text: "Berikut adalah code yang bisa anda gunakan untuk melakukan reset password", // plain text body
-		html: `<div><h5>Code : </h5><b>${code}</b></div>`, // html body
+		html: require("../htmls/verification_code.html").vcTemplate(code), // html body
 	});
 };
 
@@ -100,11 +100,11 @@ exports.forgotPassword = async (req, res) => {
 		}
 		const user = find.rows[0];
 		const code = await randomString(6, "1234567890");
-		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id, code: code }, ["id", "code", "email", "\"userId\""]);
+		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id, code: code }, ["id", "email", "\"userId\""]);
 		await sendResetPassCodeToEmail(user.email, code);
 		return res.json({
 			success: true,
-			message: "send code below change your password ",
+			message: "we have send code to your email, please check your email",
 			results: fp.rows[0],
 		});
 	} catch (err) {
