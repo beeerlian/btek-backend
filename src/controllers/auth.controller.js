@@ -3,6 +3,17 @@
 const model = require("../models");
 const { hash, verify, signJWT, randomString } = require("../utils");
 
+const { sendEmail } = require("../helpers/smtp.helper");
+
+const sendResetPassCodeToEmail = (receiver, code) => {
+	return sendEmail({
+		to: `${receiver}`,
+		subject: "btek-backend-reset-password-code", // Subject line
+		text: "Berikut adalah code yang bisa anda gunakan untuk melakukan reset password", // plain text body
+		html: `<div><h5>Code : </h5><b>${code}</b></div>`, // html body
+	});
+};
+
 exports.login = async (req, res) => {
 	try {
 		const result = await model.user.findUserByEmail(req.body);
@@ -89,9 +100,8 @@ exports.forgotPassword = async (req, res) => {
 		}
 		const user = find.rows[0];
 		const code = await randomString(6, "1234567890");
-		console.log(code);
 		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id, code: code }, ["id", "code", "email", "\"userId\""]);
-
+		await sendResetPassCodeToEmail(user.email, code);
 		return res.json({
 			success: true,
 			message: "send code below change your password ",
