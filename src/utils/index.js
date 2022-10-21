@@ -22,3 +22,9 @@ exports.signJWT = (payload) => {
 exports.verifyJWT = (token) => {
 	return jwt.verify(token, process.env.JWT_SECRET);
 };
+
+exports.randomString = async (length) => {
+	const { customAlphabet } = await import("nanoid");
+	const nanoId = customAlphabet("0123456789-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 10);
+	return nanoId(length);
+};

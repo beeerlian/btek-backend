@@ -30,7 +30,7 @@ exports.passwordOnlyCreds = [
 ];
 
 exports.resetPasswordCreds = [
-	body("code").isUUID(4).withMessage("invalid code"),
+	body("code").isLength({ min: 50, max: 50 }).withMessage("invalid code"),
 	body("email").isEmail().normalizeEmail().withMessage("Email is invalid"),
 	body("newPassword")
 		.isStrongPassword({ minNumbers: 1 })

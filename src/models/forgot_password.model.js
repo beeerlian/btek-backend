@@ -5,8 +5,8 @@ const defaultReturns = ["*"];
 exports.insertForgotPassword = (data, returns) => {
 	returns = returns || defaultReturns;
 	console.log(returns.join(", "));
-	const sql = `INSERT INTO ${table} ("email", "userId") VALUES ($1, $2) RETURNING ${returns.join(", ")}`;
-	const params = [data.email, data.userId];
+	const sql = `INSERT INTO ${table} ("email", "userId", "code") VALUES ($1, $2, $3) RETURNING ${returns.join(", ")}`;
+	const params = [data.email, data.userId, data.code];
 	return db.query(sql, params);
 };
 

@@ -1,7 +1,7 @@
 
 
 const model = require("../models");
-const { hash, verify, signJWT } = require("../utils");
+const { hash, verify, signJWT, randomString } = require("../utils");
 
 exports.login = async (req, res) => {
 	try {
@@ -55,9 +55,6 @@ exports.register = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
 	try {
-		// if (req.user.email !== req.body.email) {
-		// 	throw new Error("cannot send reset password with this email, token unmatched");
-		// }
 
 		const fp = await model.forgot_password.findForgotPassword(req.body.code);
 		const forgotPassword = fp.rows[0];
@@ -90,16 +87,14 @@ exports.resetPassword = async (req, res) => {
 
 exports.forgotPassword = async (req, res) => {
 	try {
-		// if (req.user.email !== req.body.email) {
-		// 	throw new Error("cannot send forgot password with this email, token unmatched");
-		// }
-
 		const find = await model.user.findUserByEmail(req.body);
 		if (!find.rows[0]) {
 			throw new Error("User not found");
 		}
 		const user = find.rows[0];
-		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id }, ["id", "code", "email", "\"userId\""]);
+		const code = await randomString(50);
+		console.log(code);
+		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id, code: code }, ["id", "code", "email", "\"userId\""]);
 
 		return res.json({
 			success: true,
