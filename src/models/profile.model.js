@@ -38,8 +38,6 @@ exports.updateProfileById = (id, data) => {
 	column.forEach((val, i) => {
 		conditionalQuery.push(`"${val}" = $${2 + i}`);
 	});
-	console.log([id, ...values]);
-	console.log(`UPDATE ${table} SET ${conditionalQuery.join(", ")} WHERE "userId" = $1 OR "id" = $1 RETURNING *`);
 	const sql = `UPDATE ${table} SET ${conditionalQuery.join(", ")} WHERE "userId" = $1 OR "id" = $1 RETURNING *`;
 	const params = [id, ...values];
 	return db.query(sql, params);

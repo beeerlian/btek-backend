@@ -48,13 +48,16 @@ exports.register = async (req, res) => {
 		req.body.password = await hash(req.body.password);
 		const insert = await model.user.insertUser(req.body);
 		if (!insert.rows[0]) {
-			await model.profile.insertProfile({ userId: insert.rows[0].id });
+			throw new Error("Failed To Create User");
 		}
+		await model.profile.insertProfile({ userId: insert.rows[0].id });
 		const user = insert.rows[0];
+		const token = signJWT({ id: user.id, email: user.email });
 		return res.json({
 			success: true,
 			message: "User registerd successfully, please complete profile",
 			results: user,
+			access_token: token
 		});
 	} catch (err) {
 		return res.status(500).json({

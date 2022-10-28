@@ -11,7 +11,6 @@ exports.getById = async (req, res) => {
 			throw new Error("profile not found");
 		}
 		const profile = result.rows[0];
-
 		return res.json({
 			success: true,
 			message: "Get profile successfully",
@@ -26,7 +25,12 @@ exports.getById = async (req, res) => {
 };
 
 exports.updateById = async (req, res) => {
-	
+	if (req.file) {
+		req.body.picture = req.file.filename;
+	} else {
+		delete req.body["picture"];
+	}
+	console.log(req.body);
 	try {
 		const result =
 			await model.profile.updateProfileById(req.params.id || req.user.id, req.body);
