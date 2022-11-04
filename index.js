@@ -16,3 +16,5 @@ app.use("/", require("./src/routes"));
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => { console.log(`server running on ${PORT}`); });
+
+module.exports = app;
