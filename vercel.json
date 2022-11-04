@@ -4,12 +4,20 @@
 		{
 			"src": "index.js",
 			"use": "@now/node"
+		},
+		{
+			"src": "assets/uploads/**",
+			"use": "@vercel/static"
 		}
 	],
 	"routes": [
 		{
 			"src": "/(.*)",
 			"dest": "index.js"
+		},
+		{
+			"src": "/assets/uploads/(.+)",
+			"dest": "assets/uploads/$1"
 		}
 	]
 }
