@@ -2,3 +2,5 @@
 /package-lock.json
 .env
 /assets/uploads/*
+
+!/assets/uploads//.gitkeep 
