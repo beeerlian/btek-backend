@@ -10,7 +10,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/assets/uploads", express.static(path.join(__dirname, "assets", "uploads")));
+app.use("/assets/uploads", express.static(path.resolve(__dirname, "assets", "uploads")));
 app.use("/", require("./src/routes"));
 
 
