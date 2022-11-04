@@ -10,7 +10,7 @@ const extGenerator = (mimetype) => {
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		cb(null, path.join(__dirname, "assets", "uploads"));
+		cb(null, path.join("var/", "task", "assets", "uploads"));
 	},
 	filename: async (req, file, cb) => {
 		const ext = extGenerator(file.mimetype);
