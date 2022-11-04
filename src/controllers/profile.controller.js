@@ -25,13 +25,12 @@ exports.getById = async (req, res) => {
 };
 
 exports.updateById = async (req, res) => {
-	if (req.file) {
-		req.body.picture = req.file.filename;
-	} else {
-		delete req.body["picture"];
-	}
-	console.log(req.body);
 	try {
+		if (req.file) {
+			req.body.picture = req.file.filename;
+		} else {
+			delete req.body["picture"];
+		}
 		const result =
 			await model.profile.updateProfileById(req.params.id || req.user.id, req.body);
 		if (!result.rows[0]) {

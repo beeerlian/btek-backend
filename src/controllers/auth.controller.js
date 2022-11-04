@@ -28,7 +28,10 @@ exports.login = async (req, res) => {
 		return res.json({
 			success: true,
 			message: "Logged in successfully",
-			access_token: token,
+			result: {
+				...user,
+				access_token: token
+			},
 		});
 	} catch (err) {
 		return res.status(500).json({
@@ -56,8 +59,11 @@ exports.register = async (req, res) => {
 		return res.json({
 			success: true,
 			message: "User registerd successfully, please complete profile",
-			results: user,
-			access_token: token
+			result: {
+				...user,
+				access_token: token
+			},
+
 		});
 	} catch (err) {
 		return res.status(500).json({
@@ -85,7 +91,7 @@ exports.resetPassword = async (req, res) => {
 		return res.json({
 			success: true,
 			message: "password reset successfully",
-			results: user,
+			result: user,
 		});
 	} catch (err) {
 		return res.status(500).json({
@@ -108,7 +114,7 @@ exports.forgotPassword = async (req, res) => {
 		return res.json({
 			success: true,
 			message: "we have send code to your email, please check your email",
-			results: fp.rows[0],
+			result: fp.rows[0],
 		});
 	} catch (err) {
 		return res.status(500).json({
