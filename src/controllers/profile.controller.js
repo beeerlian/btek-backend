@@ -26,8 +26,9 @@ exports.getById = async (req, res) => {
 
 exports.updateById = async (req, res) => {
 	try {
+		console.log(req.file);
 		if (req.file) {
-			req.body.picture = req.file.filename;
+			req.body.picture = req.file.path;
 		} else {
 			delete req.body["picture"];
 		}
