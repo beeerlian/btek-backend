@@ -108,7 +108,7 @@ exports.forgotPassword = async (req, res) => {
 			throw new Error("User not found");
 		}
 		const user = find.rows[0];
-		const code = await randomString(6, "1234567890");
+		const code = await randomString(6, "123456789");
 		const fp = await model.forgot_password.insertForgotPassword({ email: user.email, userId: user.id, code: code }, ["id", "email", "\"userId\""]);
 		await sendResetPassCodeToEmail(user.email, code);
 		return res.json({
